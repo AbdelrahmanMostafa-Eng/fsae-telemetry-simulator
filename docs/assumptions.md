@@ -1,76 +1,148 @@
 # Modeling Assumptions
 Key simplifications used in the FSAE Telemetry Simulator.
 
-The goal of this simulator is to provide realistic‑looking telemetry data without requiring a full physics engine.  
-To achieve this, several assumptions and simplifications are made.
+The simulator aims to generate realistic‑looking telemetry without requiring a full physics engine.  
+These assumptions keep the model simple, fast, and easy to extend.
 
 ---
 
-## 1. Track & Environment
-- Track length is constant for all laps.
-- No elevation changes, weather effects, or temperature variation.
-- Grip level is assumed constant except for tire wear.
-- No traffic, overtakes, or yellow flags.
+# 1. Track & Environment
+
+## Track Characteristics (Table)
+| Parameter        | Value        | Notes                              |
+|------------------|--------------|-------------------------------------|
+| Track Length     | 1200 m       | Constant for all laps               |
+| Sectors          | 3            | No sector‑level simulation          |
+| Elevation        | None         | Flat track assumption               |
+| Weather          | Constant     | No rain, wind, or temperature model |
 
 ---
 
-## 2. Speed Model
-- Driver speed varies around a target value with Gaussian noise.
-- No aerodynamic drag model is applied.
-- No throttle/brake simulation — speed is treated as an average per lap.
-- Maximum speed is capped and does not depend on fuel load or tire wear.
+# 2. Speed Model
+
+## Speed Generation Diagram (ASCII)
+```
+Target Speed
+     │
+     ▼
+Random Variation (Gaussian Noise)
+     │
+     ▼
+Clamped to Max Speed
+     │
+     ▼
+Final Lap Speed
+```
+
+## Speed Assumptions (Table)
+| Assumption | Description |
+|-----------|-------------|
+| Noise     | Gaussian, independent per lap |
+| Drag      | Not modeled |
+| Braking   | Not modeled |
+| Throttle  | Not modeled |
+| Max Speed | Fixed cap |
 
 ---
 
-## 3. Fuel Model
-- Fuel burn rate is constant per lap.
-- Fuel mass affects lap time linearly (lighter car = slightly faster).
-- No fuel mixture modes or engine maps.
-- Fuel density is constant.
+# 3. Fuel Model
+
+## Fuel Flow Diagram (Mermaid)
+```mermaid
+flowchart LR
+    A[Fuel Tank] --> B[Fuel Burn per Lap]
+    B --> C[Reduced Fuel Mass]
+    C --> D[Lower Lap Time]
+```
+
+## Fuel Assumptions (Table)
+| Parameter | Assumption |
+|----------|------------|
+| Burn Rate | Constant per lap |
+| Density   | Constant |
+| Effect on Lap Time | Linear improvement as fuel decreases |
+| Engine Modes | Not modeled |
 
 ---
 
-## 4. Tire Wear Model
-- Tire wear increases linearly per lap.
-- Wear rate may scale with speed but not with temperature or load.
-- No tire compound differences (soft/medium/hard).
-- No tire degradation recovery (cooling laps).
+# 4. Tire Wear Model
+
+## Tire Wear Curve (ASCII)
+```
+Wear
+1.0 |                         *
+0.8 |                     *
+0.6 |                 *
+0.4 |             *
+0.2 |         *
+0.0 | *  *  *  *  *  *  *  *  *  *
+      1  2  3  4  5  6  7  8  9  Laps
+```
+
+## Tire Assumptions (Table)
+| Assumption | Description |
+|-----------|-------------|
+| Wear Rate | Linear increase per lap |
+| Compounds | Not modeled |
+| Temperature | Not modeled |
+| Grip Loss | Linear with wear |
+| Recovery | None |
 
 ---
 
-## 5. Lap Time Model
-- Lap time is based on average speed, fuel load, and tire wear.
-- No sector‑by‑sector simulation.
-- No dynamic events (lockups, mistakes, traffic).
-- No aerodynamic or mechanical grip modeling.
+# 5. Lap Time Model
+
+## Lap Time Influence Diagram (Mermaid)
+```mermaid
+flowchart TD
+    A[Average Speed] --> D[Lap Time]
+    B[Tire Wear] --> D
+    C[Fuel Load] --> D
+```
+
+## Lap Time Assumptions (Table)
+| Factor | Modeled? | Notes |
+|--------|----------|-------|
+| Speed | ✔ | Base determinant |
+| Tire Wear | ✔ | Linear penalty |
+| Fuel Load | ✔ | Linear benefit |
+| Driver Errors | ✖ | Not modeled |
+| Sector Times | ✖ | No micro‑simulation |
 
 ---
 
-## 6. Pit Stops
-- Pit stop time is fixed.
-- No variation for tire changes, refueling, or driver errors.
-- No pit entry/exit time loss modeled.
+# 6. Pit Stops
+
+## Pit Stop Timeline (ASCII)
+```
+Lap N ──► Pit Entry ──► Fixed Stop Time ──► Pit Exit ──► Lap N+1
+```
+
+## Pit Stop Assumptions (Table)
+| Assumption | Description |
+|-----------|-------------|
+| Stop Time | Fixed (no variation) |
+| Tire Change | Instant (no extra time) |
+| Refueling | Instant |
+| Entry/Exit Loss | Not modeled |
 
 ---
 
-## 7. Randomness & Noise
-- Random variation is applied to speed and lap time to simulate driver inconsistency.
-- Noise is Gaussian and independent per lap.
-- No correlation between laps (e.g., momentum, confidence, overheating).
+# 7. Randomness & Noise
+
+## Noise Model (Table)
+| Component | Distribution | Notes |
+|-----------|--------------|-------|
+| Speed | Gaussian | Independent per lap |
+| Lap Time | Gaussian | Small variation |
+| Wear | Deterministic | No randomness |
 
 ---
 
-## 8. Stint Comparison
-- Stints are compared only by average lap time.
-- No strategy modeling (undercut, overcut, tire offset).
-- No degradation curves or fuel‑corrected lap times.
-
----
-
-## Purpose of These Assumptions
+# Purpose of These Assumptions
 These simplifications allow the simulator to:
-- Generate realistic‑looking telemetry quickly  
-- Remain easy to understand and modify  
-- Serve as a teaching, testing, or visualization tool  
+- Generate telemetry quickly  
+- Stay easy to understand  
+- Be extended with more physics later  
 
-As the project grows, these assumptions can be replaced with more advanced physics or data‑driven models.
+As the project evolves, each assumption can be replaced with a more advanced model.
