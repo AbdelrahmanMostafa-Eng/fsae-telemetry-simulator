@@ -51,21 +51,3 @@ def test_to_json(tmp_path):
     assert data[0]["Lap"] == 1
     assert data[0]["Lap Time"] == 60.0
     assert data[0]["Speed"] == 120.0
-
-
-if __name__ == "__main__":
-    print("Running TelemetryExport tests...\n")
-
-    tests = [
-        ("test_to_csv", lambda: test_to_csv(__import__("pathlib").Path("."))),
-        ("test_to_json", lambda: test_to_json(__import__("pathlib").Path("."))),
-    ]
-
-    for name, func in tests:
-        try:
-            func()
-            print(f"✔ {name} passed")
-        except Exception:
-            print(f"✘ {name} FAILED")
-
-    print("\nAll tests completed.")
