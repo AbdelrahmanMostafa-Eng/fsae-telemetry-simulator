@@ -33,23 +33,3 @@ def test_plot_tire_wear():
     wear = np.array([0, 5, 10, 15])
     fig = TelemetryPlots.plot_tire_wear(wear)
     assert fig is not None
-
-
-if __name__ == "__main__":
-    print("Running TelemetryPlots tests...\n")
-
-    tests = [
-        ("test_plot_lap_times", test_plot_lap_times),
-        ("test_plot_speeds", test_plot_speeds),
-        ("test_plot_fuel_usage", test_plot_fuel_usage),
-        ("test_plot_tire_wear", test_plot_tire_wear),
-    ]
-
-    for name, func in tests:
-        try:
-            func()
-            print(f"✔ {name} passed")
-        except AssertionError:
-            print(f"✘ {name} FAILED")
-
-    print("\nAll tests completed.")
