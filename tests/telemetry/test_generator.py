@@ -38,23 +38,3 @@ def test_speeds_within_reasonable_range():
 
     assert np.all(speeds >= 0)
     assert np.all(speeds <= 200)
-
-
-if __name__ == "__main__":
-    print("Running TelemetryGenerator tests...\n")
-
-    tests = [
-        ("test_generate_shapes", test_generate_shapes),
-        ("test_fuel_is_non_decreasing", test_fuel_is_non_decreasing),
-        ("test_tire_wear_is_non_decreasing", test_tire_wear_is_non_decreasing),
-        ("test_speeds_within_reasonable_range", test_speeds_within_reasonable_range),
-    ]
-
-    for name, func in tests:
-        try:
-            func()
-            print(f"✔ {name} passed")
-        except AssertionError:
-            print(f"✘ {name} FAILED")
-
-    print("\nAll tests completed.")
