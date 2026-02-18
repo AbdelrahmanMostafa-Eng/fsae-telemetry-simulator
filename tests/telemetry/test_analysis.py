@@ -36,23 +36,3 @@ def test_compare_stints_equal():
 
     result = TelemetryAnalysis.compare_stints(stint1, stint2)
     assert result == "equal"
-
-
-if __name__ == "__main__":
-    print("Running TelemetryAnalysis tests...\n")
-
-    tests = [
-        ("test_average_lap_time", test_average_lap_time),
-        ("test_compare_stints_faster_first", test_compare_stints_faster_first),
-        ("test_compare_stints_faster_second", test_compare_stints_faster_second),
-        ("test_compare_stints_equal", test_compare_stints_equal),
-    ]
-
-    for name, func in tests:
-        try:
-            func()
-            print(f"✔ {name} passed")
-        except AssertionError:
-            print(f"✘ {name} FAILED")
-
-    print("\nAll tests completed.")
