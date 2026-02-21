@@ -33,7 +33,7 @@ def apply_style(config: PlotStyleConfig = PlotStyleConfig()):
     })
 
 
-# Example usage and plotting
+# Example usage
 
 if __name__ == "__main__":
     apply_style()
